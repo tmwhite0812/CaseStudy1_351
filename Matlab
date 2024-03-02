@@ -1,0 +1,30 @@
+%% First audio sample
+%
+
+[xv,xvfs] = audioread('violin_w_siren.wav'); 
+t = [0:length(y)-1]*1/Fs; 
+
+load gong
+
+r = 1;  % Resistor value 
+c = (5 * 10^(-6)); % Capacitor value 
+tao = r * c;  
+delta = 1/Fs;
+
+a = [1, 1/tao];  % Coefficients obtained from CT equation of HP and LP filter
+b = 1/tao;  % Low Pass
+
+a_2 = [1, 1/tao];
+b_2 = [1,0]; % High Pass
+
+
+sys = tf(b, a); % Low Pass
+sys2 = tf(b_2, a_2);
+
+b = lsim(sys2, y, t);
+%check = lsim(sys2,xv,t);
+
+figure 
+plot(t,b)
+%%
+sound(b,Fs)
