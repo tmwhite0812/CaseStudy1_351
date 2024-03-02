@@ -1,0 +1,38 @@
+[xv,xvfs] = audioread('violin_w_siren.wav'); 
+t = [0:length(xv)-1]*1/xvfs; 
+
+fft_violin = fft(xv);
+plot(abs(fft_violin))
+xlabel("frequency")
+ylabel("magnitude")
+
+r = 1000;  % Resistor value 
+c = (5 * 10^(-6)); % Capacitor value 
+tao = r * c;  
+delta = 1/Fs;
+
+a = [1, 1/tao];  % Coefficients obtained from CT equation of HP and LP filter
+b = 1/tao;  % Low Pass
+
+a_2 = [1, 1/tao];
+b_2 = [1,0]; % High Pass
+
+
+sys = tf(b, a); % Low Pass
+sys2 = tf(b_2, a_2);
+
+
+b = lsim(sys, fft_violin, t);
+c = lsim(sys2, fft_violin, t);
+
+figure
+subplot(2,1,1)
+subtitle("lowpass")
+plot(abs(b))
+xlabel("frequency")
+ylabel("magnitude")
+subplot(2,1,2)
+subtitle("highpass")
+plot(abs(c))
+xlabel("frequency")
+ylabel("magnitude")
