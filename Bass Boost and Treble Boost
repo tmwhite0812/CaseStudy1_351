@@ -66,3 +66,41 @@ sound(m,samp);
 
 %% Bass Boosted
 sound(clear,samp) % Can hear bass better with headphones/earphones on
+
+%% Space Station 
+[m, samp] = audioread("Space Station - Treble Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+figure
+plot(t,m(:,1)), title("Orginal Audio Waveform");
+ylabel("Amplitude")
+xlabel("Time (seconds)")
+
+X = fft(m);
+f = (0:length(m)-1)* samp/length(m);
+
+treble = lsim(2*(sys2)^2,m(:,1), t);
+
+figure
+plot(t,treble), title("Orginal Audio Waveform");
+ylabel("Amplitude")
+xlabel("Time (seconds)")
+
+
+figure
+subplot(2,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("Fs coeff. of Space")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(2,1,2)
+plot(f(1:length(f)/2),abs(treble(1:length(f)/2))),title("Fs coeff. of Space treble")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+
+%% Orginal Space
+sound(m,samp);
+
+%% Treble Space
+sound(treble,samp);
