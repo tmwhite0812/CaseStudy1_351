@@ -65,4 +65,4 @@ ylabel('|X(f)|')
 sound(m,samp);
 
 %% Bass Boosted
-sound(clear,samp)
+sound(clear,samp) % Can hear bass better with headphones/earphones on
