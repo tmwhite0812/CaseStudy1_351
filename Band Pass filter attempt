@@ -10,7 +10,7 @@ a_2 = [1, 1/tau];
 b_2 = [1,0]; % High Pass
 
 a_3 = [1, 1/tau2];  % Coefficients obtained from CT equation of HP and LP filter
-b_3 = 1/tao2;  % Low Pass
+b_3 = 1/tau2;  % Low Pass
 
 a_4 = [1, 1/tau2];
 b_4 = [1,0]; % High Pass
@@ -41,7 +41,7 @@ X = fft(m);
 % Filter
 test = lsim((sys4)^10, m, t); % First passing through HP 10 times
 
-test = lsim(7*(sys)^2,test,t); % Ten passing through LP 2 times with amp * 7
+test = lsim(8*(sys)^2,test,t); % Ten passing through LP 2 times with amp * 8
 
 figure, plot(t, test), title("Filtered Waveform");
 ylabel("Amplitude")
@@ -52,6 +52,10 @@ filtX = fft(test);
 figure 
 subplot(2,1,1)
 plot(f(1:length(f)/2),abs(X(1:length(f)/2))), title("Unfiltered Coeff.")
+
+% Only did half because ffts are symmetric and we can't hear the higher
+% freq anyway 
+
 xlabel('f, Hz')
 ylabel('|X(f)|')
 
