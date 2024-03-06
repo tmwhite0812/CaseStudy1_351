@@ -1,0 +1,38 @@
+%% Giant Steps
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+figure
+plot(t,m), title("Orginal Audio Waveform");
+ylabel("Amplitude")
+xlabel("Time (seconds)")
+
+X = fft(m);
+f = (0:length(m)-1)* samp/length(m);
+
+bass_boost = lsim(10*(sys3)^3, m(:,1), t);
+clear = lsim(10*(sys2), bass_boost, t); % Helps get rid of the extra booming effects
+
+
+figure
+subplot(3,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("Fs coeff. of Giant")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,2)
+plot(f(1:length(f)/2),abs(bass_boost(1:length(f)/2))),title("Fs coeff. of Giant bass boost")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,3)
+plot(f(1:length(f)/2),abs(clear(1:length(f)/2))),title("Fs coeff. of Giant (Clear?)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+%% OG Audio
+sound(m,samp);
+
+%% Bass Boosted
+
+sound(clear,samp)
