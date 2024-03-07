@@ -39,7 +39,8 @@ f = (0:length(m)-1)* samp/length(m);
 
 bass_boost = lsim(10*(sys3)^3, m(:,1), t);
 clear = lsim(10*(sys2), bass_boost, t); % Helps get rid of the extra booming effects
-
+bass_boost_fft = fft(bass_boost);
+clear_fft = fft(clear);
 figure
 plot(t,clear), title("Filtered Waveform")
 ylabel("Amplitude")
@@ -52,12 +53,12 @@ xlabel('f, Hz')
 ylabel('|X(f)|')
 
 subplot(3,1,2)
-plot(f(1:length(f)/2),abs(bass_boost(1:length(f)/2))),title("Fs coeff. of Giant (bass boosted)")
+plot(f(1:length(f)/2),abs(bass_boost_fft(1:length(f)/2))),title("Fs coeff. of Giant (bass boosted)")
 xlabel('f, Hz')
 ylabel('|X(f)|')
 
 subplot(3,1,3)
-plot(f(1:length(f)/2),abs(clear(1:length(f)/2))),title("Fs coeff. of Giant (Clear)")
+plot(f(1:length(f)/2),abs(clear_fft(1:length(f)/2))),title("Fs coeff. of Giant (Clear)")
 xlabel('f, Hz')
 ylabel('|X(f)|')
 
@@ -80,7 +81,7 @@ X = fft(m);
 f = (0:length(m)-1)* samp/length(m);
 
 treble = lsim(2*(sys2)^2,m(:,1), t);
-
+treble_fft = fft(treble);
 figure
 plot(t,treble), title("Orginal Audio Waveform");
 ylabel("Amplitude")
@@ -94,7 +95,7 @@ xlabel('f, Hz')
 ylabel('|X(f)|')
 
 subplot(2,1,2)
-plot(f(1:length(f)/2),abs(treble(1:length(f)/2))),title("Fs coeff. of Space treble")
+plot(f(1:length(f)/2),abs(treble_fft(1:length(f)/2))),title("Fs coeff. of Space treble")
 xlabel('f, Hz')
 ylabel('|X(f)|')
 
