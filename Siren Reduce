@@ -1,0 +1,42 @@
+%% Blue in Green
+tau = 159.1549*10^(-6) * 2 * pi; % cutoff freq of about 1 kHz
+
+a = [1, 1/tau];  % Coefficients obtained from CT equation of HP and LP filter
+b = 1/tau;  % Low Pass
+
+a_2 = [1, 1/tau];
+b_2 = [1,0]; % High Pass
+
+sys = tf(b, a); % Low Pass
+sys2 = tf(b_2, a_2); % High Pass
+
+[m,samp] = audioread("Blue in Green with Siren.wav");
+t = (0:length(m)-1) * 1/samp;
+
+figure 
+plot(t, m), title("Waveform of sounds");
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+
+
+
+X = fft(m);
+f = (0:length(m)-1) * samp/length(m);
+
+plot(f(1:length(X)/2), abs(X(1:length(X)/2))), title("FS of Blue in Green")
+xlabel("f, Hz")
+ylabel("Amplitude")
+
+ans = lsim(4*(sys)^2, m(:,1), t); % Pass through 2 times with amp 4
+ans = lsim(3*(sys2)^5, ans,t);   % Pass through 5 times with amp 3
+
+figure, spectrogram(ans,1024,200,1024,samp,'reassigned','yaxis'), title("Filtered Siren")
+figure, spectrogram(m(:,1),1024,200,1024,samp,'reassigned','yaxis'), title("Original Siren");
+       
+%%
+
+sound(m,samp)
+%%
+
+sound(ans,samp);
