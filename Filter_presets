@@ -47,17 +47,20 @@ sys3 = tf(b_3, a_3); % Low Pass
 sys4 = tf(b_4, a_4); % High Pass
 
 % cutoff frequency of 500 HZ
-sys5 = tf(b, a); % Low Pass
-sys6 = tf(b_2, a_2); % High Pass
-
+%sys5 = tf(b, a); % Low Pass
+%sys6 = tf(b_2, a_2); % High Pass
+sys5 = tf(b_5, a_5);
+sys6 = tf(b_6, a_6);
 % cutoff frequency of 200 HZ
-sys7 = tf(b, a); % Low Pass
-sys8 = tf(b_2, a_2); % High Pass
-
+%sys7 = tf(b, a); % Low Pass
+%sys8 = tf(b_2, a_2); % High Pass
+sys7 = tf(b_7, a_7);
+sys8 = tf(b_8, a_8);
 % cutoff frequency of 60 HZ
-sys9 = tf(b, a); % Low Pass
-sys0 = tf(b_2, a_2); % High Pass
-
+%sys9 = tf(b, a); % Low Pass
+%sys0 = tf(b_2, a_2); % High Pass
+sys9 = tf(b_9, a_9); % Low Pass
+sys0 = tf(b_0, a_0); % High Pass
 %% Giant Steps
 [m,samp] = audioread("Giant Steps Bass Cut.wav");
 t = (0:length(m)-1) * 1/samp;
