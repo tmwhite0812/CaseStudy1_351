@@ -154,3 +154,46 @@ xlabel('filtered')
 subplot(3, 1, 3)
 plot(abs(fft_e))
 xlabel('frequency response')
+
+%% Space Station 
+[m, samp] = audioread("Space Station - Treble Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+% figure
+% plot(t,m(:,1)), title("Orginal Audio Waveform");
+% ylabel("Amplitude")
+% xlabel("Time (seconds)")
+
+X = fft(m);
+f = (0:length(m)-1)* samp/length(m);
+
+treble = lsim(2*(sys2)^2,m(:,1), t);
+
+x2 = fft(treble);
+
+w = 2*pi*samp;
+expon = exp(1j*w*t);
+low = filter(b_3, a_3, expon);
+e_treb = lsim(0.3*(sys3)^3, expon, t);
+x3 = fft(e_treb);
+% figure
+% plot(t,treble), title("Orginal Audio Waveform");
+% ylabel("Amplitude")
+% xlabel("Time (seconds)")
+
+
+figure
+subplot(3,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("Fs coeff. of Space")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,2)
+plot(f(1:length(f)/2),abs(x2(1:length(f)/2))),title("Fs coeff. of Space treble")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,3)
+plot(f(1:length(f)/2),abs(x3(1:length(f)/2))),title("response of Space treble")
+xlabel('f, Hz')
+ylabel('|X(f)|')
