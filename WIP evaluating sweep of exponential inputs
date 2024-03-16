@@ -109,3 +109,48 @@ title('Highpass imaginary Phase plot')
     count = count +2;
 end
 
+%% Giant Steps
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+figure
+plot(t,m), title("Orginal Audio Waveform");
+ylabel("Amplitude")
+xlabel("Time (seconds)")
+
+X = fft(m);
+f = (0:length(m)-1)* samp/length(m);
+
+bass_boost = lsim(10*(sys3)^3, m(:,1), t);
+treble_dampen = lsim(0.3*(sys2), m(:,1), t);
+bass_boost = (bass_boost+treble_dampen)/2;
+
+clear = lsim(10*(sys2), bass_boost, t); % Helps get rid of the extra booming effects
+
+%sys2
+%t = 0:1/samp:t;
+w = 2*pi*samp;
+expon = exp(1j*w*t);
+high = filter(b_2, a_2, expon);
+ex_treb_damp = lsim(0.3*(sys2), expon, t);
+
+%sys3
+%t = 0:1/samp:t;
+w = 2*pi*2500;
+expon = exp(1j*w*t);
+low = filter(b_3, a_3, expon);
+ex_bb = lsim(0.3*(sys3)^3, expon, t);
+
+ex_bb = (ex_bb + ex_treb_damp)/2;
+clear_e = lsim(10*(sys2), ex_bb, t);
+fft_e = fft(clear_e);
+fft_audio = fft(clear);
+subplot(3, 1, 1)
+plot(abs(X))
+xlabel('original')
+subplot(3, 1, 2)
+plot(abs(fft_audio))
+xlabel('filtered')
+subplot(3, 1, 3)
+plot(abs(fft_e))
+xlabel('frequency response')
