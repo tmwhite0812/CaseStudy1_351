@@ -8,65 +8,65 @@
 %4. 2500
 %5. 10000
 
-f1 = 5;     
+f1 = 1;     
 f2 = 100;       
 
 tau1 = 1/(2*pi*f1);     
 tau2 = 1/(2*pi*f2);     
 
-aB1 = [tau1*tau2 tau1+tau2 1]; 
-bB1 = [tau2 1];  
+aB1 = [1 tau1+tau2 tau1*tau2]; 
+bB1 = [0 tau2 0];  
 
 
 bandSys1 = tf(bB1, aB1);
 
 f1 = 100;     
-f2 = 200;       
+f2 = 500;       
 
 tau1 = 1/(2*pi*f1);     
 tau2 = 1/(2*pi*f2);     
 
-aB1 = [tau1*tau2 tau1+tau2 1]; 
-bB1 = [tau2 1];  
+aB2 = [1 tau1+tau2 tau1*tau2]; 
+bB2 = [0 tau2 0];
 
 
-bandSys2 = tf(bB1, aB1);
+bandSys2 = tf(bB2, aB2);
 
-f1 = 400;     
-f2 = 600;       
-
-tau1 = 1/(2*pi*f1);     
-tau2 = 1/(2*pi*f2);     
-
-aB1 = [tau1*tau2 tau1+tau2 1]; 
-bB1 = [tau2 1];  
-
-
-bandSys3 = tf(bB1, aB1);
-
-f1 = 2400;     
-f2 = 2600;       
+f1 = 500;     
+f2 = 1900;       
 
 tau1 = 1/(2*pi*f1);     
 tau2 = 1/(2*pi*f2);     
 
-aB1 = [tau1*tau2 tau1+tau2 1]; 
-bB1 = [tau2 1];  
+aB3 = [1 tau1+tau2 tau1*tau2]; 
+bB3 = [0 tau2 0];  
 
 
-bandSys4 = tf(bB1, aB1);
+bandSys3 = tf(bB3, aB3);
 
-f1 = 9900;     
-f2 = 10100;       
+f1 = 1900;     
+f2 = 4100;       
 
 tau1 = 1/(2*pi*f1);     
 tau2 = 1/(2*pi*f2);     
 
-aB1 = [tau1*tau2 tau1+tau2 1]; 
-bB1 = [tau2 1];  
+aB4 = [1 tau1+tau2 tau1*tau2]; 
+bB4 = [0 tau2 0]; 
 
 
-bandSys5 = tf(bB1, aB1);
+bandSys4 = tf(bB4, aB4);
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [1 tau1+tau2 tau1*tau2]; 
+bB5 = [0 tau2 0]; 
+
+
+bandSys5 = tf(bB5, aB5);
 
 
 
@@ -86,7 +86,7 @@ X = fft(m);
 f = (0:length(m)-1)* samp/length(m);
 
 
-boost = lsim(100*bandSys1, m(:,1), t);
+boost = lsim(1*bandSys1, m(:,1), t);
 freq1 = lsim(1*bandSys2, m(:,1), t);
 freq2 = lsim(1*bandSys3, m(:,1), t);
 freq3 = lsim(1*bandSys4, m(:,1), t);
@@ -116,21 +116,31 @@ plot(f(1:length(f)/2),abs(x2(1:length(f)/2))),title("Fs coeff. of Giant (bass bo
 xlabel('f, Hz')
 ylabel('|X(f)|')
 
+figure
+
+freqs(bB1, aB1)
+figure
+
+freqs(bB3, aB3)
+figure
+
+freqs(bB5, aB5)
+
 
 %% Original Audio
 %sound(m,samp);
 
 %% Bass Boosted
-%sound(newSignal,samp) % Can hear bass better with headphones/earphones on
+sound(newSignal,samp) % Can hear bass better with headphones/earphones on
 
 %% Space Station 
 [m, samp] = audioread("Space Station - Treble Cut.wav");
 t = (0:length(m)-1) * 1/samp;
 
-boost = lsim(100*bandSys4, m(:,1), t);
+boost = lsim(1*bandSys1, m(:,1), t);
 freq1 = lsim(1*bandSys2, m(:,1), t);
 freq2 = lsim(1*bandSys3, m(:,1), t);
-freq3 = lsim(1*bandSys1, m(:,1), t);
+freq3 = lsim(1*bandSys4, m(:,1), t);
 freq4 = lsim(1*bandSys5, m(:,1), t);
 
 newSignal = boost + freq1 + freq2 + freq3 + freq4;
@@ -141,7 +151,7 @@ newSignal = boost + freq1 + freq2 + freq3 + freq4;
 
 
 %% Treble Space
-%sound(newSignal,samp)
+sound(newSignal,samp)
 
 
 
