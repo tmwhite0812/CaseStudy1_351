@@ -9,89 +9,64 @@
 %5. 10000
 
 f1 = 5;     
-f2 = 100;      
+f2 = 100;       
 
-R1 = 1 / (2*pi*f1);    
-R2 = 1 / (2*pi*f1);   
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
 
-C1 = 1/(2*pi*f1*R1);      
-C2 = 1/(2*pi*f2*R2);     
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [tau2 1];  
 
-tau1 = R1 * C1;     
-tau2 = R2 * C2;     
 
-aB1 = [tau1 0];    % Band pass filter coeffecients 
-bB1 = [tau2*tau1 (tau2+tau1) 1];  
+bandSys1 = tf(bB1, aB1);
 
-bandSys1 = tf(aB1, bB1);
+f1 = 100;     
+f2 = 200;       
 
-f3 = 100;     %Cut-off frequencies in Hz
-f4 = 200;      
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
 
-R3 = 1 / (2*pi*f3);    
-R4 = 1 / (2*pi*f3);   
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [tau2 1];  
 
-C3 = 1/(2*pi*f3*R3);      
-C4 = 1/(2*pi*f4*R4);     
 
-tau3 = R3 * C3;     
-tau4 = R4 * C4;     
+bandSys2 = tf(bB1, aB1);
 
-aB2 = [tau3 0];    % Band pass filter coeffecients 
-bB2 = [tau4*tau3 (tau4+tau3) 1];  
+f1 = 400;     
+f2 = 600;       
 
-bandSys2 = tf(aB2, bB2);
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
 
-f5 = 400;     %Cut-off frequencies in Hz
-f6 = 600;      
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [tau2 1];  
 
-R5 = 1 / (2*pi*f5);    
-R6 = 1 / (2*pi*f5);   
 
-C5 = 1/(2*pi*f5*R5);      
-C6 = 1/(2*pi*f6*R6);     
+bandSys3 = tf(bB1, aB1);
 
-tau5 = R5 * C5;     
-tau6 = R6 * C6;     
+f1 = 2400;     
+f2 = 2600;       
 
-aB3 = [tau5 0];    % Band pass filter coeffecients 
-bB3 = [tau6*tau5 (tau6+tau5) 1];  
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
 
-bandSys3 = tf(aB3, bB3);
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [tau2 1];  
 
-f7 = 2400;     %Cut-off frequencies in Hz
-f8 = 2600;      
 
-R7 = 1 / (2*pi*f7);    
-R8 = 1 / (2*pi*f7);   
+bandSys4 = tf(bB1, aB1);
 
-C7 = 1/(2*pi*f7*R7);      
-C8 = 1/(2*pi*f8*R8);     
+f1 = 9900;     
+f2 = 10100;       
 
-tau7 = R7 * C7;     
-tau8 = R8 * C8;     
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
 
-aB4 = [tau7 0];    % Band pass filter coeffecients 
-bB4 = [tau8*tau7 (tau8+tau7) 1];  
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [tau2 1];  
 
-bandSys4 = tf(aB4, bB4);
 
-f9 = 9900;     %Cut-off frequencies in Hz
-f0 = 11000;      
-
-R9 = 1 / (2*pi*f9);    
-R0 = 1 / (2*pi*f9);   
-
-C9 = 1/(2*pi*f9*R9);      
-C0 = 1/(2*pi*f0*R0);     
-
-tau9 = R9 * C9;     
-tau0 = R0 * C0;     
-
-aB5 = [tau9 0];    % Band pass filter coeffecients 
-bB5 = [tau0*tau9 (tau0+tau9) 1];  
-
-bandSys5 = tf(aB5, bB5);
+bandSys5 = tf(bB1, aB1);
 
 
 
