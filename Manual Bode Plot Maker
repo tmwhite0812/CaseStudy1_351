@@ -1,0 +1,78 @@
+%% Filter Creation 
+
+tau = 15*10^(-6) * 2*pi; % cutoff freq of around 10 kHz
+tau2 = 60*10^(-6) * 2*pi; % cutoff freq of around 2.5 kHz
+tau3 = 300.678*10^(-6) * 2*pi; %Cutoff freq of around 500 Hz
+tau4 = 800*10^(-6) * 2*pi; %Cutoff Frequency of around 200 Hz
+tau5 = 2.6*10^(-3) * 2*pi; %Cutoff Frequency of around 60 Hz
+
+
+% cutoff frequency of 10 kHZ
+sys = tf(1/tau, [1, 1/tau]); % Low Pass
+sys2 = tf([1,0], [1, 1/tau]); % High Pass
+
+% cutoff frequency of 2.5 kHZ
+sys3 = tf(1/tau2, [1, 1/tau2]); % Low Pass
+sys4 = tf([1,0], [1, 1/tau2]); % High Pass
+
+% cutoff frequency of 500 HZ
+sys5 = tf(1/tau3, [1, 1/tau3]); % Low Pass
+sys6 = tf([1,0], [1, 1/tau3]); % High Pass
+
+% cutoff frequency of 200 HZ
+sys7 = tf(1/tau4, [1, 1/tau4]); % Low Pass
+sys8 = tf([1,0], [1, 1/tau4]); % High Pass
+
+% cutoff frequency of 60 HZ
+sys9 = tf(1/tau5, [1, 1/tau5]); % Low Pass
+sys0 = tf([1,0], [1, 1/tau5]); % High Pass
+
+
+%%
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+total_tim = tau2 * 300;  % Arbitrary chose this tau to get a curtain time interval 
+samp_period = 1/samp;
+points = round(total_tim / samp_period);
+t = linspace(0, total_tim, points);
+
+
+
+%% Bode plot 
+
+range = logspace(1,5,200); % Ranges of frequencies from 10 Hz to 10^5 Hz
+
+h_bandMag = zeros(1,200); % 200 points from 10 to 10^5 Hz
+h_bandAng = h_bandMag;
+
+%Setup from HW3
+for n = 1 : 200
+    input3 = exp(1i * (2 * pi * range(n)) .* t); 
+    output_low = lsim(sys3, input3, t); % Low-Pass
+    output_high = lsim(sys6, output_low, t); % High Pass
+    
+    
+    h_bandMag(n) = 20 * log10(abs(output_high(3500)/input3(3500)));
+    h_bandAng(n) = angle(output_high(3500)/input3(3500));
+    
+    % Index 3500 was chosen because at that spot the sys was in steady
+    % state whether it was LP or HP.
+end 
+h_bandAng = h_bandAng/pi;
+
+
+
+figure
+subplot(2,1,1)
+plot(range(1:135), h_bandMag(1:135)), title("Magnitude of H(jw) function (Band Pass)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(1:135), h_bandAng(1:135)), title("Angle of H(jw) function (Band Pass)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+
