@@ -18,9 +18,10 @@ bB1 = [0 tau1 0];
 bandSys1 = tf(bB1, aB1);
 
 figure
-freqs(bB1, aB1);
+freqs(bB1, aB1, 2*pi*logspace(-1,3,50));
 title("Filter 1 (1-100Hz) Frequency Response");
-
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
 
 
 f1 = 100;     
@@ -35,9 +36,10 @@ bB2 = [0 tau1 0];
 bandSys2 = tf(bB2, aB2);
 
 figure
-freqs(bB2, aB2);
+freqs(bB2, aB2, 2*pi*logspace(1,4,50));
 title("Filter 2 (100-500Hz) Frequency Response")
-
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
 
 
 f1 = 500;     
@@ -52,9 +54,10 @@ bB3 = [0 tau1 0];
 bandSys3 = tf(bB3, aB3);
 
 figure
-freqs(bB3, aB3);
+freqs(bB3, aB3, 2*pi*logspace(2,4,50));
 title("Filter 3 (500-1900Hz) Frequency Response");
-
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
 
 
 f1 = 1900;     
@@ -69,8 +72,10 @@ bB4 = [0 tau1 0];
 bandSys4 = tf(bB4, aB4);
 
 figure
-freqs(bB4, aB4);
+freqs(bB4, aB4, 2*pi*logspace(2,5,50));
 title("Filter 4 (1900-4100Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
 
 f1 = 4100;     
 f2 = 20000;       
@@ -84,8 +89,10 @@ bB5 = [0 tau1 0];
 bandSys5 = tf(bB5, aB5);
 
 figure
-freqs(bB5, aB5);
+freqs(bB5, aB5, 2*pi*logspace(3,5,50));
 title("Filter 5 (4100-20000Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
 
 
 
