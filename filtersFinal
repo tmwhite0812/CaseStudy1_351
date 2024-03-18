@@ -1,0 +1,208 @@
+%% Filter Creation 
+%Central frequencies
+%1. 50.5
+%2. 300
+%3. 1200
+%4. 3000
+%5. 12050
+
+f1 = 1;     
+f2 = 100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [0 tau1 0];  
+
+
+bandSys1 = tf(bB1, aB1);
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+
+bandSys2 = tf(bB2, aB2);
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+
+bandSys3 = tf(bB3, aB3);
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+
+bandSys4 = tf(bB4, aB4);
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [tau1*tau2 tau1+tau2 1]; 
+bB5 = [0 tau1 0]; 
+
+
+bandSys5 = tf(bB5, aB5);
+
+
+
+
+
+
+%% Giant Steps
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Bass Boost preset (Giant)
+
+band1 = lsim(50*bandSys1, m(:,1), t);
+band2 = lsim(10*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys4, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+bassBoost = band1+band2+band3+band4+band5;
+
+%% Treble Boost preset (Giant)
+
+band1 = lsim(1*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(3*bandSys3, m(:,1), t);
+band4 = lsim(5*bandSys4, m(:,1), t);
+band5 = lsim(10*bandSys5, m(:,1), t);
+
+trebleBoost = band1+band2+band3+band4+band5;
+
+
+%% Unity Preset (Giant)
+band1 = lsim(1*bandSys4, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys1, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+Unity = band1+band2+band3+band4+band5;
+
+%% Original Signal (Giant)
+%sound(m,samp);
+
+%% Bass Boosted (Giant)
+%sound(bassBoost,samp) 
+
+%% Treble Boosted (Giant)
+%sound(trebleBoost,samp) 
+
+%% Unity (Space)
+%sound(Unity, samp)
+
+
+
+
+%% Space Station 
+[m, samp] = audioread("Space Station - Treble Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Bass Boost preset (Space)
+
+band1 = lsim(50*bandSys1, m(:,1), t);
+band2 = lsim(10*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys4, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+bassBoost = band1+band2+band3+band4+band5;
+
+%% Treble Boost preset (Space)
+
+band1 = lsim(1*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(3*bandSys3, m(:,1), t);
+band4 = lsim(5*bandSys4, m(:,1), t);
+band5 = lsim(10*bandSys5, m(:,1), t);
+
+trebleBoost = band1+band2+band3+band4+band5;
+
+
+%% Unity Preset (Space)
+band1 = lsim(1*bandSys4, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys1, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+Unity = band1+band2+band3+band4+band5;
+
+%% Orginal Signal (Space)
+%sound(m,samp)
+
+%% Bass Boosted (Giant)
+%sound(bassBoost,samp) 
+
+%% Treble Boost (Space)
+%sound(trebleBoost,samp)
+
+%% Unity (Space)
+%sound(Unity, samp)
+
+
+
+
+%% Siren
+[m,samp] = audioread("Blue_in_Green_with_Siren.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Siren Preset
+band1 = lsim(1*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(0.00001*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys4, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+Siren = band1+band2+band3+band4+band5;
+
+figure 
+plot(t, m), title("Waveform of sounds");
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+X = fft(m);
+f = (0:length(m)-1) * samp/length(m);
+
+plot(f(1:length(X)/2), abs(X(1:length(X)/2))), title("FS of Blue in Green")
+xlabel("f, Hz")
+ylabel("Amplitude")
+  
+
+%look at freqs of b and a coeff to see if the frequency response is weird
+
+figure, spectrogram(Siren,1024,200,1024,samp,'reassigned','yaxis'), title("Filtered Siren")
+figure, spectrogram(m(:,1),1024,200,1024,samp,'reassigned','yaxis'), title("Original Siren");
+       
+%%
+
+%sound(m,samp)
+%%
+
+%sound(Siren,samp);
