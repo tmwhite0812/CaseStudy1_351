@@ -1,0 +1,116 @@
+%% Filter Creation (From Bandpass push)
+
+
+%Central frequencies
+%1. 52.5
+%2. 150
+%3. 500
+%4. 2500
+%5. 10000
+
+f1 = 1;     
+f2 = 100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [0 tau1 0];  
+
+
+bandSys1 = tf(bB1, aB1);
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+
+bandSys2 = tf(bB2, aB2);
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+
+bandSys3 = tf(bB3, aB3);
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+
+bandSys4 = tf(bB4, aB4);
+
+f1 = 4100;     % 
+f2 = 20000;    %
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [(tau1*tau2), (tau1+tau2), 1]; 
+bB5 = [tau1 0]; 
+
+
+bandSys5 = tf(bB5, aB5);
+%% Part C
+
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+
+total_tim = 0.005;  % Arbitrarily chose this tau to get a curtain time interval 
+samp_period = 1/samp;
+points = round(total_tim / samp_period);
+t = linspace(0, total_tim, points);
+
+
+input = [1 zeros(1, length(t)-1)]; % Impulse
+ 
+impulse1 = lsim(bandSys1, input, t);
+impulse2 = lsim(bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t);
+impulse4 = lsim(bandSys4, input, t);
+impulse5 = lsim(bandSys5, input, t);
+
+figure
+plot(t, impulse1),title("Band-pass 1")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse2),title("Band-pass 2")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse3),title("Band-pass 3")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse4),title("Band-pass 4")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse5),title("Band-pass 5")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+%% Part D
+
+
+
