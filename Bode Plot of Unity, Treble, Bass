@@ -1,0 +1,168 @@
+%% Filter Creation (Bandpass push)
+
+
+%Central frequencies
+%1. 52.5
+%2. 150
+%3. 500
+%4. 2500
+%5. 10000
+
+f1 = 1;     
+f2 = 100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [0 tau1 0];  
+
+
+bandSys1 = tf(bB1, aB1);
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+
+bandSys2 = tf(bB2, aB2);
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+
+bandSys3 = tf(bB3, aB3);
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+
+bandSys4 = tf(bB4, aB4);
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [tau1*tau2 tau1+tau2 1]; 
+bB5 = [0 tau1 0]; 
+
+
+bandSys5 = tf(bB5, aB5);
+
+%%
+
+total_tim = 0.0016 * 300;  % Arbitrary chose this tau to get a curtain time interval 
+samp_period = 1/samp;
+points = round(total_tim / samp_period);
+t = linspace(0, total_tim, points);
+
+%% Bode plot of Unity, Bass, and Treble Preset
+
+range = logspace(-1,6,200); % Ranges of frequencies from 10 Hz to 10^6 Hz
+
+h_UnityMag = zeros(1,200); % 200 points from 10 to 10^5 Hz
+h_UnityAng = h_UnityMag;
+
+for n = 1 : 200
+    input3 = exp(1i * (2 * pi * range(n)) .* t); 
+
+    band1 = lsim(1*bandSys1, input3, t);
+    band2 = lsim(1*bandSys2, input3, t);
+    band3 = lsim(1*bandSys3, input3, t);
+    band4 = lsim(1*bandSys4, input3, t);
+    band5 = lsim(1*bandSys5, input3, t);
+    
+    unity = band1 + band2 + band3 + band4 + band5;
+    
+    band1 = lsim(20*bandSys1, input3, t);
+    band2 = lsim(5*bandSys2, input3, t);
+    band3 = lsim(1*bandSys3, input3, t);
+    band4 = lsim(1*bandSys4, input3, t);
+    band5 = lsim(1*bandSys5, input3, t);
+    
+    bass = band1 + band2 + band3 + band4 + band5;
+    
+    band1 = lsim(1*bandSys1, input3, t);
+    band2 = lsim(1*bandSys2, input3, t);
+    band3 = lsim(3*bandSys3, input3, t);
+    band4 = lsim(5*bandSys4, input3, t);
+    band5 = lsim(10*bandSys5, input3, t);
+    
+    treble = band1 + band2 + band3 + band4 + band5;
+    
+    h_UnityMag(n) = 20 * log10(abs(unity(20000)/input3(20000)));
+    h_UnityAng(n) = angle(unity(20000)/input3(20000));
+    
+    h_BassMag(n) = 20 * log10(abs(bass(20000)/input3(20000)));
+    h_BassAng(n) = angle(bass(20000)/input3(20000));
+    
+    h_TrebleMag(n) = 20 * log10(abs(treble(20000)/input3(20000)));
+    h_TrebleAng(n) = angle(treble(20000)/input3(20000));
+    
+    
+    % Index 3500 was chosen because at that spot the sys was in steady
+    % state.
+end 
+h_UnityAng = h_UnityAng/pi;
+
+
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_UnityMag(10:152)), title("Magnitude of H(jw) function (Unity)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_UnityAng(10:152)), title("Angle of H(jw) function (Unity)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_BassMag(10:152)), title("Magnitude of H(jw) function (Bass)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_BassAng(10:152)), title("Angle of H(jw) function (Bass)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_TrebleMag(10:152)), title("Magnitude of H(jw) function (Treble)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_TrebleAng(10:152)), title("Angle of H(jw) function (Treble)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
