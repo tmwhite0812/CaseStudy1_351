@@ -1,0 +1,87 @@
+%% Filter Creation (Bandpass push)
+
+
+%Central frequencies
+%1. 52.5
+%2. 150
+%3. 500
+%4. 2500
+%5. 10000
+
+f1 = 1;     
+f2 = 100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [0 tau1 0];  
+
+
+bandSys1 = tf(bB1, aB1);
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+
+bandSys2 = tf(bB2, aB2);
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+bandSys3 = tf(bB3, aB3);
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+
+bandSys4 = tf(bB4, aB4);
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [tau1*tau2 tau1+tau2 1]; 
+bB5 = [0 tau1 0]; 
+
+
+bandSys5 = tf(bB5, aB5);
+
+%%
+[m,samp] = audioread("rain_argue.mp3");
+
+%%
+t = (0:length(m(6000000:6500000))-1) * 1/samp;
+
+band1 = lsim(0*bandSys4, m((6000000:6500000),1), t);
+band2 = lsim(0*bandSys2, m((6000000:6500000),1), t);
+band3 = lsim(2*bandSys3, m((6000000:6500000),1), t);
+band4 = lsim(0*bandSys1, m((6000000:6500000),1), t);
+band5 = lsim(0*bandSys5, m((6000000:6500000),1), t);
+
+Unity = band1+band2+band3+band4+band5;
+%%
+sound(m(6000000:6500000),samp);
+
+%%
+sound(Unity,samp);
