@@ -1,0 +1,409 @@
+%% Filter Creation 
+%Central frequencies
+%1. 50.5
+%2. 300
+%3. 1200
+%4. 3000
+%5. 12050
+
+%cutoff frequencies
+f1 = 1;     
+f2 = 100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1]; 
+bB1 = [0 tau1 0]; 
+
+bandSys1 = tf(bB1, aB1);
+
+% graphing frequency response for filter 1
+figure
+freqs(bB1, aB1, 2*pi*logspace(-1,3,50));
+title("Filter 1 (1-100Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+bandSys2 = tf(bB2, aB2);
+
+figure
+freqs(bB2, aB2, 2*pi*logspace(1,4,50));
+title("Filter 2 (100-500Hz) Frequency Response")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+bandSys3 = tf(bB3, aB3);
+
+figure
+freqs(bB3, aB3, 2*pi*logspace(2,4,50));
+title("Filter 3 (500-1900Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+bandSys4 = tf(bB4, aB4);
+
+figure
+freqs(bB4, aB4, 2*pi*logspace(2,5,50));
+title("Filter 4 (1900-4100Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [tau1*tau2 tau1+tau2 1]; 
+bB5 = [0 tau1 0]; 
+
+bandSys5 = tf(bB5, aB5);
+
+figure
+freqs(bB5, aB5, 2*pi*logspace(3,5,50));
+title("Filter 5 (4100-20000Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+%%
+
+total_tim = 0.0016 * 300;  % Arbitrary chose this tau to get a curtain time interval 
+samp_period = 1/samp;
+points = round(total_tim / samp_period);
+t = linspace(0, total_tim, points);
+
+%% Bode plot of Unity, Bass, and Treble Preset
+
+range = logspace(-1,6,200); % Ranges of frequencies from 10 Hz to 10^6 Hz
+
+h_UnityMag = zeros(1,200); % 200 points from 10 to 10^5 Hz
+h_UnityAng = h_UnityMag;
+
+for n = 1 : 200
+    input3 = exp(1i * (2 * pi * range(n)) .* t); 
+
+    band1 = lsim(1*bandSys1, input3, t);
+    band2 = lsim(1*bandSys2, input3, t);
+    band3 = lsim(1*bandSys3, input3, t);
+    band4 = lsim(1*bandSys4, input3, t);
+    band5 = lsim(1*bandSys5, input3, t);
+    
+    unity = band1 + band2 + band3 + band4 + band5;
+    
+    band1 = lsim(20*bandSys1, input3, t);
+    band2 = lsim(5*bandSys2, input3, t);
+    band3 = lsim(1*bandSys3, input3, t);
+    band4 = lsim(1*bandSys4, input3, t);
+    band5 = lsim(1*bandSys5, input3, t);
+    
+    bass = band1 + band2 + band3 + band4 + band5;
+    
+    band1 = lsim(1*bandSys1, input3, t);
+    band2 = lsim(1*bandSys2, input3, t);
+    band3 = lsim(3*bandSys3, input3, t);
+    band4 = lsim(5*bandSys4, input3, t);
+    band5 = lsim(10*bandSys5, input3, t);
+    
+    treble = band1 + band2 + band3 + band4 + band5;
+    
+    h_UnityMag(n) = 20 * log10(abs(unity(20000)/input3(20000)));
+    h_UnityAng(n) = angle(unity(20000)/input3(20000));
+    
+    h_BassMag(n) = 20 * log10(abs(bass(20000)/input3(20000)));
+    h_BassAng(n) = angle(bass(20000)/input3(20000));
+    
+    h_TrebleMag(n) = 20 * log10(abs(treble(20000)/input3(20000)));
+    h_TrebleAng(n) = angle(treble(20000)/input3(20000));
+    
+    
+    % Index 3500 was chosen because at that spot the sys was in steady
+    % state.
+end 
+h_UnityAng = h_UnityAng/pi;
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_UnityMag(10:152)), title("Magnitude of H(jw) function (Unity)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_UnityAng(10:152)), title("Angle of H(jw) function (Unity)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_BassMag(10:152)), title("Magnitude of H(jw) function (Bass)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_BassAng(10:152)), title("Angle of H(jw) function (Bass)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+figure
+subplot(2,1,1)
+plot(range(10:152), h_TrebleMag(10:152)), title("Magnitude of H(jw) function (Treble)")
+xlabel("Frequency (Hz)")
+ylabel("Amplitude |H(w)| (dB)");
+
+subplot(2,1,2)
+plot(range(10:152), h_TrebleAng(10:152)), title("Angle of H(jw) function (Treble)")
+xlabel("Frequency (Hz)")
+ylabel("Phase (angle)")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+%% Giant Steps
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Bass Boost preset (Giant)
+
+band1 = lsim(25*bandSys1, m(:,1), t);
+band2 = lsim(5*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys4, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+bassBoost = band1+band2+band3+band4+band5;
+
+%% Treble Boost preset (Giant)
+
+band1 = lsim(1*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(3*bandSys3, m(:,1), t);
+band4 = lsim(5*bandSys4, m(:,1), t);
+band5 = lsim(10*bandSys5, m(:,1), t);
+
+trebleBoost = band1+band2+band3+band4+band5;
+
+%% Unity Preset (Giant)
+band1 = lsim(1*bandSys4, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys1, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+Unity = band1+band2+band3+band4+band5;
+
+%% Original Signal (Giant)
+%sound(m,samp);
+
+%% Bass Boosted (Giant)
+%sound(bassBoost,samp) 
+
+%% Treble Boosted (Giant)
+%sound(trebleBoost,samp) 
+
+%% Unity (giant)
+%sound(Unity, samp)
+
+%% Plotting FFT
+f = (0:length(m)-1)* samp/length(m);
+X = fft(m);
+x2 = fft(bassBoost);
+x3 = fft(trebleBoost);
+figure
+subplot(3,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("FFT of Giant Steps")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,2)
+plot(f(1:length(f)/2),abs(x2(1:length(f)/2))),title("FFT of Giant Steps (bass boosted)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,3)
+plot(f(1:length(f)/2),abs(x3(1:length(f)/2))),title("FFT of Giant Steps (treble boosted)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+%% Space Station 
+[m, samp] = audioread("Space Station - Treble Cut.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Bass Boost preset (Space)
+
+band1 = lsim(20*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys4, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+bassBoost = band1+band2+band3+band4+band5;
+
+%% Treble Boost preset (Space)
+
+band1 = lsim(1*bandSys1, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(3*bandSys3, m(:,1), t);
+band4 = lsim(5*bandSys4, m(:,1), t);
+band5 = lsim(10*bandSys5, m(:,1), t);
+
+trebleBoost = band1+band2+band3+band4+band5;
+
+%% Unity Preset (Space)
+band1 = lsim(1*bandSys4, m(:,1), t);
+band2 = lsim(1*bandSys2, m(:,1), t);
+band3 = lsim(1*bandSys3, m(:,1), t);
+band4 = lsim(1*bandSys1, m(:,1), t);
+band5 = lsim(1*bandSys5, m(:,1), t);
+
+Unity = band1+band2+band3+band4+band5;
+
+%% Orginal Signal (Space)
+%sound(m,samp)
+
+%% Bass Boosted (space)
+%sound(bassBoost,samp) 
+
+%% Treble Boost (Space)
+%sound(trebleBoost,samp)
+
+%% Unity (Space)
+%sound(Unity, samp)
+
+%% Plotting
+f = (0:length(m)-1)* samp/length(m);
+X = fft(m);
+x2 = fft(bassBoost);
+x3 = fft(trebleBoost);
+figure
+subplot(3,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("FFT of Space Station")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,2)
+plot(f(1:length(f)/2),abs(x2(1:length(f)/2))),title("FFT of Space station (bass boosted)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(3,1,3)
+plot(f(1:length(f)/2),abs(x3(1:length(f)/2))),title("FFT of Space Station (treble boosted)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+%% Siren
+[m,samp] = audioread("Blue_in_Green_with_Siren.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Siren
+[m,samp] = audioread("Blue in Green with Siren.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Siren Preset
+band1 = lsim(4*bandSys1, m(:,1), t);
+band2 = lsim(1/128*bandSys2, m(:,1), t);
+band3 = lsim(1/256*bandSys3, m(:,1), t);
+band4 = lsim(1/256*bandSys4, m(:,1), t);
+band5 = lsim(1/128*bandSys5, m(:,1), t);
+
+Siren = band1+band2+band3+band4+band5;
+
+figure 
+plot(t, m), title("Waveform of sounds");
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+X = fft(m);
+f = (0:length(m)-1) * samp/length(m);
+
+plot(f(1:length(X)/2), abs(X(1:length(X)/2))), title("FS of Blue in Green")
+xlabel("f, Hz")
+ylabel("Amplitude")
+  
+ 
+figure, spectrogram(Siren,1024,200,1024,samp,'reassigned','yaxis'), title("Filtered Siren")
+figure, spectrogram(m(:,1),1024,200,1024,samp,'reassigned','yaxis'), title("Original Siren");
+       
+%% Original Sound
+sound(m,samp)
+%% Filtered Sound
+sound(Siren,samp);
+
+%% Voice (chosen sound) 
+[m,samp] = audioread("rain_argue.mp3");
+
+%%
+t = (0:length(m(6000000:6500000))-1) * 1/samp;
+
+band1 = lsim(0*bandSys4, m((6000000:6500000),1), t);
+band2 = lsim(0*bandSys2, m((6000000:6500000),1), t);
+band3 = lsim(2*bandSys3, m((6000000:6500000),1), t);
+band4 = lsim(0*bandSys1, m((6000000:6500000),1), t);
+band5 = lsim(0*bandSys5, m((6000000:6500000),1), t);
+
+Unity = band1+band2+band3+band4+band5;
+%%
+sound(m(6000000:6500000),samp);
+
+%%
+sound(Unity,samp);
+
+%% Plotting
+
+figure
+subplot(2,1,1)
+plot(t,m),title("time domain original")
+xlabel('time')
+ylabel('|X(f)|')
+
+subplot(2,1,2)
+plot(t,Unity),title(" (bass boosted)")
+xlabel('time')
+ylabel('|X(f)|')
+
+%%
+f = (0:length(m)-1)* samp/length(m);
+X = fft(m);
+x2 = fft(Unity);
+
+figure
+subplot(2,1,1)
+plot(f(1:length(f)/2),abs(X(1:length(f)/2))),title("FFT of Rain")
+xlabel('f, Hz')
+ylabel('|X(f)|')
+
+subplot(2,1,2)
+plot(f(1:length(f)/2),abs(x2(1:length(f)/2))),title("FFT of Rain (filtered)")
+xlabel('f, Hz')
+ylabel('|X(f)|')
