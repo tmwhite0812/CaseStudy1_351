@@ -1,0 +1,133 @@
+%% Filter Creation 
+%Central frequencies
+%1. 50.5
+%2. 300
+%3. 1200
+%4. 3000
+%5. 12050
+
+f1 = 1;    % Cut off frequency of HP
+f2 = 100;  % Cut off frequncy of LP
+
+tau1 = 1/(2*pi*f1);    
+tau2 = 1/(2*pi*f2);     
+
+aB1 = [tau1*tau2 tau1+tau2 1];  
+bB1 = [0 tau1 0]; 
+
+bandSys1 = tf(bB1, aB1);
+
+figure
+freqs(bB1, aB1, 2*pi*logspace(-1,3,50));
+title("Filter 1 (1-100Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 100;     
+f2 = 500;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB2 = [tau1*tau2 tau1+tau2 1]; 
+bB2 = [0 tau1 0];
+
+bandSys2 = tf(bB2, aB2);
+
+figure
+freqs(bB2, aB2, 2*pi*logspace(1,4,50));
+title("Filter 2 (100-500Hz) Frequency Response")
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 500;     
+f2 = 1900;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB3 = [tau1*tau2 tau1+tau2 1]; 
+bB3 = [0 tau1 0];  
+
+bandSys3 = tf(bB3, aB3);
+
+figure
+freqs(bB3, aB3, 2*pi*logspace(2,4,50));
+title("Filter 3 (500-1900Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+f1 = 1900;     
+f2 = 4100;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB4 = [tau1*tau2 tau1+tau2 1];  
+bB4 = [0 tau1 0]; 
+
+bandSys4 = tf(bB4, aB4);
+
+figure
+freqs(bB4, aB4, 2*pi*logspace(2,5,50));
+title("Filter 4 (1900-4100Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+f1 = 4100;     
+f2 = 20000;       
+
+tau1 = 1/(2*pi*f1);     
+tau2 = 1/(2*pi*f2);     
+
+aB5 = [tau1*tau2 tau1+tau2 1]; 
+bB5 = [0 tau1 0]; 
+
+bandSys5 = tf(bB5, aB5);
+
+figure
+freqs(bB5, aB5, 2*pi*logspace(3,5,50));
+title("Filter 5 (4100-20000Hz) Frequency Response");
+ for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
+ set(gca,'YScale','linear'), axis tight, end
+
+
+
+%% Siren
+[m,samp] = audioread("Blue in Green with Siren.wav");
+t = (0:length(m)-1) * 1/samp;
+
+%% Siren Preset
+band1 = lsim(4*bandSys1, m(:,1), t);
+band2 = lsim(1/128*bandSys2, m(:,1), t);
+band3 = lsim(1/256*bandSys3, m(:,1), t);
+band4 = lsim(1/256*bandSys4, m(:,1), t);
+band5 = lsim(1/128*bandSys5, m(:,1), t);
+
+Siren = band1+band2+band3+band4+band5;
+
+figure 
+plot(t, m), title("Waveform of sounds");
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+X = fft(m);
+f = (0:length(m)-1) * samp/length(m);
+
+plot(f(1:length(X)/2), abs(X(1:length(X)/2))), title("FS of Blue in Green")
+xlabel("f, Hz")
+ylabel("Amplitude")
+  
+ 
+figure, spectrogram(Siren,1024,200,1024,samp,'reassigned','yaxis'), title("Filtered Siren")
+figure, spectrogram(m(:,1),1024,200,1024,samp,'reassigned','yaxis'), title("Original Siren");
+       
+%%
+
+sound(m,samp)
+%%
+
+sound(Siren,samp);
