@@ -190,6 +190,84 @@ ylabel("Phase (angle)")
  for i = 1:2  , subplot(2,1,i), set(gca,'XScale','log'),
  set(gca,'YScale','linear'), axis tight, end
 
+%% Part C
+
+[m,samp] = audioread("Giant Steps Bass Cut.wav");
+
+total_tim = 0.005;  % Arbitrarily chose this tau to get a curtain time interval 
+samp_period = 1/samp;
+points = round(total_tim / samp_period);
+t = linspace(0, total_tim, points);
+
+
+input = [1 zeros(1, length(t)-1)]; % Impulse
+ 
+impulse1 = lsim(bandSys1, input, t);
+impulse2 = lsim(bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t); % Also Unity Preset
+impulse4 = lsim(bandSys4, input, t);
+impulse5 = lsim(bandSys5, input, t);
+
+unity  = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
+
+impulse1 = lsim(20*bandSys1, input, t);
+impulse2 = lsim(5*bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t);  % Bass Preset 
+impulse4 = lsim(bandSys4, input, t);
+impulse5 = lsim(bandSys5, input, t);
+
+bass = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
+
+impulse1 = lsim(bandSys1, input, t);
+impulse2 = lsim(bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t); % Treble Preset 
+impulse4 = lsim(5*bandSys4, input, t);
+impulse5 = lsim(10*bandSys5, input, t);
+
+treble = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
+
+figure
+plot(t, impulse1),title("Band-pass 1")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse2),title("Band-pass 2")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse3),title("Band-pass 3")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse4),title("Band-pass 4")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t, impulse5),title("Band-pass 5")
+xlabel("Time (s)")
+ylabel("Amplitude")
+%% Preset Impulse
+figure
+plot(t(1:30), unity(1:30)),title("Unity Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t(1:30), bass(1:30)),title("Bass Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t(1:30), treble(1:30)),title("Treble Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+%% Part D
+
 %% Giant Steps
 [m,samp] = audioread("Giant Steps Bass Cut.wav");
 t = (0:length(m)-1) * 1/samp;
