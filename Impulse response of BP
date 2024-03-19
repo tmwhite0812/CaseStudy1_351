@@ -81,9 +81,27 @@ input = [1 zeros(1, length(t)-1)]; % Impulse
  
 impulse1 = lsim(bandSys1, input, t);
 impulse2 = lsim(bandSys2, input, t);
-impulse3 = lsim(bandSys3, input, t);
+impulse3 = lsim(bandSys3, input, t); % Also Unity Preset
 impulse4 = lsim(bandSys4, input, t);
 impulse5 = lsim(bandSys5, input, t);
+
+unity  = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
+
+impulse1 = lsim(20*bandSys1, input, t);
+impulse2 = lsim(5*bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t);  % Bass Preset 
+impulse4 = lsim(bandSys4, input, t);
+impulse5 = lsim(bandSys5, input, t);
+
+bass = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
+
+impulse1 = lsim(bandSys1, input, t);
+impulse2 = lsim(bandSys2, input, t);
+impulse3 = lsim(bandSys3, input, t); % Treble Preset 
+impulse4 = lsim(5*bandSys4, input, t);
+impulse5 = lsim(10*bandSys5, input, t);
+
+treble = impulse1 + impulse2 + impulse3 + impulse4 + impulse5;
 
 figure
 plot(t, impulse1),title("Band-pass 1")
@@ -109,8 +127,24 @@ figure
 plot(t, impulse5),title("Band-pass 5")
 xlabel("Time (s)")
 ylabel("Amplitude")
+%% Preset Impulse
+figure
+plot(t(1:30), unity(1:30)),title("Unity Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t(1:30), bass(1:30)),title("Bass Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
+
+figure
+plot(t(1:30), treble(1:30)),title("Treble Impulse")
+xlabel("Time (s)")
+ylabel("Amplitude")
 
 %% Part D
+
 
 
 
